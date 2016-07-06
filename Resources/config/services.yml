@@ -1,0 +1,5 @@
+services:
+    tg_video.form.type.task:
+        class: TweedeGolf\VideoBundle\Form\VideoType
+        tags:
+            - { name: form.type }
