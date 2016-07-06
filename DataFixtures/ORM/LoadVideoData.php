@@ -66,11 +66,14 @@ class LoadVideoData extends AbstractFixture implements ContainerAwareInterface, 
      */
     public function load(ObjectManager $manager)
     {
+        $faker = $this->faker;
+
         for ($i = 0; $i < self::FAKE_VIDEO_COUNT; $i += 1) {
             $video = new Video();
             $video->setName($faker->text(15));
             $video->setDescription($faker->text(500));
             $video->setUrl($faker->randomElement($this->randomVideos));
+            $video->setYoutubeId($faker->isbn10())
             $this->addReference('video-'.$i, $video);
             $manager->persist($video);
         }
