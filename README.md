@@ -11,5 +11,5 @@ The following nodejs libraries are required.
 - lodash
 - superagent
 
-The SCSS stylesheet that is provided words as an extension of the Bootstrap 3 framework.
+The SCSS stylesheet that is provided works as an extension of the Bootstrap 3 framework.
 The Bootstrap javascript components are not required.

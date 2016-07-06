@@ -1,5 +1,12 @@
 services:
+    tg_video.normalizer:
+        class: TweedeGolf\VideoBundle\Normalizer\VideoNormalizer
+        arguments:
+            - "@liip_imagine.cache.manager"
+            - "%normalize_image_filter_name%"
     tg_video.form.type.task:
         class: TweedeGolf\VideoBundle\Form\VideoType
+        arguments:
+          - "@tg_video.normalizer"
         tags:
             - { name: form.type }

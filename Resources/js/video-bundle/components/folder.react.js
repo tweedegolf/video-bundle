@@ -8,7 +8,7 @@ export default class Folder extends React.Component {
         let icon = <span className="fa fa-folder" />;
         let delete_btn = null;
 
-        if (folder.file_count === 0 && folder.folder_count === 0) {
+        if (folder.video_count === 0 && folder.folder_count === 0) {
             delete_btn = <button type="button" className="btn btn-xs btn-danger" onClick={this.onDelete.bind(this)}>
                 <span className="fa fa-trash-o" />
             </button>;
@@ -23,10 +23,10 @@ export default class Folder extends React.Component {
             // class_name = 'folder muted';
         }
 
-        let file_count = null;
-        if (folder.file_count > 0) {
+        let video_count = null;
+        if (folder.video_count > 0) {
             file_count = <span>
-                {folder.file_count}
+                {folder.video_count}
                 <span className="fa fa-file-o" />
             </span>;
         }
@@ -46,7 +46,7 @@ export default class Folder extends React.Component {
                 <td>{folder.name}</td>
                 <td className="size">
                     {folder_count}
-                    {file_count}
+                    {video_count}
                 </td>
                 <td>{folder.created}</td>
                 <td>{delete_btn}</td>

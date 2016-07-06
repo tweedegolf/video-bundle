@@ -9,48 +9,44 @@ class Cache {
                 name: '..'
             }
         };
-        this.files = {};
+        this.videos = {};
         this.data = {};
     }
 
-    findFile(id) {
-        if (!this.files[id]) {
-            console.error('File not found', id);
+    findVideo(id) {
+        if (!this.videos[id]) {
+            console.error('Video not found', id);
 
             return null;
         }
 
-        return this.files[id];
+        return this.videos[id];
     }
 
-    storeFiles(files, folder_id) {
-        _.forEach(files, (file) => {
-            this.files[file.id] = file;
+    storeVideos(videos, folder_id) {
+        _.forEach(videos, (video) => {
+            this.videos[video.id] = video;
         });
 
         if (folder_id !== undefined && this.data[folder_id]) {
-            this.data[folder_id].files = this.data[folder_id].files.concat(files);
+            this.data[folder_id].videos = this.data[folder_id].videos.concat(videos);
         }
     }
 
-    removeFiles(file_ids) {
+    removeVideos(video_ids) {
         _.forEach(this.data, (folder) => {
-            folder.files = _.filter(folder.files, (file) => (file_ids.indexOf(file.id) === -1));
+            folder.videos = _.filter(folder.videos, (video) => (video_ids.indexOf(video.id) === -1));
         });
     }
 
-    removeFolders(folder_ids) {
-        _.forEach(this.data, (folder) => {
-            folder.folders = _.filter(folder.folders, (folder) => (folder_ids.indexOf(folder.id) === -1));
-        });
-    }
-
-    getFiles(folder_id) {
+    getVideos(folder_id) {
         if (!this.data[folder_id]) {
             return [];
         }
 
-        return this.data[folder_id].files;
+        console.log(this.data);
+
+        return this.data[folder_id].videos;
     }
 
     findFolder(id) {
@@ -63,6 +59,14 @@ class Cache {
         return this.folders[id];
     }
 
+    getFolders(folder_id) {
+        if (!this.data[folder_id]) {
+            return [];
+        }
+
+        return this.data[folder_id].folders;
+    }
+
     storeFolders(folders, folder_id) {
         _.forEach(folders, (folder) => {
             this.folders[folder.id] = folder;
@@ -72,11 +76,11 @@ class Cache {
             this.data[folder_id].folders = this.data[folder_id].folders.concat(folders);
         }
     }
-    
+
     loadFolder(key, mis, hit) {
         if (this.data[key]) {
             if(!this.data[key].loading) {
-                hit(this.data[key].folders, this.data[key].files);
+                hit(this.data[key].folders, this.data[key].videos);
             } else {
                 this.data[key].waiting.push(hit)
             }
@@ -89,15 +93,7 @@ class Cache {
         }
     }
 
-    getFolders(folder_id) {
-        if (!this.data[folder_id]) {
-            return [];
-        }
-
-        return this.data[folder_id].folders;
-    }
-
-    storeFolder(key, folders, files) {
+    storeFolder(key, folders, videos) {
         if (!this.data[key]) {
             this.data[key] = {
                 waiting: []
@@ -106,13 +102,13 @@ class Cache {
 
         this.data[key].loading = false;
         this.data[key].folders = folders;
-        this.data[key].files = files;
+        this.data[key].videos = videos;
 
         this.storeFolders(folders);
-        this.storeFiles(files);
+        this.storeVideos(videos);
 
         _.forEach(this.data[key].waiting, (hit) => {
-            hit(folders, files);
+            hit(folders, videos);
         });
     }
 }

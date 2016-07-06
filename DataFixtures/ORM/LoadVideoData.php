@@ -73,7 +73,8 @@ class LoadVideoData extends AbstractFixture implements ContainerAwareInterface, 
             $video->setName($faker->text(15));
             $video->setDescription($faker->text(500));
             $video->setUrl($faker->randomElement($this->randomVideos));
-            $video->setYoutubeId($faker->isbn10())
+            $video->setThumbnail($faker->randomElement($this->randomVideos));
+            $video->setYoutubeId($faker->isbn10());
             $this->addReference('video-'.$i, $video);
             $manager->persist($video);
         }

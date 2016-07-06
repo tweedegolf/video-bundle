@@ -10,12 +10,28 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Serializer\Serializer;
 use TweedeGolf\VideoBundle\Entity\Video;
+use TweedeGolf\VideoBundle\Normalizer\VideoNormalizer;
 
 /**
  * Class VideoType.
  */
 class VideoType extends AbstractType
 {
+    /**
+     * @var
+     */
+    private $normalizer;
+
+    /**
+     * FileType constructor.
+     *
+     * @param FileNormalizer $normalizer
+     */
+    public function __construct(VideoNormalizer $normalizer)
+    {
+        $this->normalizer = $normalizer;
+    }
+
     /**
      * @param OptionsResolver $resolver
      */
@@ -42,7 +58,7 @@ class VideoType extends AbstractType
         $view->vars['options'] = json_encode([
             'multiple' => $options['multiple'],
             'name' => $view->vars['full_name'],
-            'selected' => $data,
+            'selected' => $serializer->normalize($data)
         ]);
     }
 

@@ -16,7 +16,7 @@
     }
   }
 
-  .file-picker-selection {
+  .video-picker-selection {
     min-height: 42px;
 
     .btn {
@@ -35,6 +35,9 @@
       .fa, img {
         margin-right: 4px;
       }
+      img {
+        width: 24px;
+      }
       .fa {
         font-size: 24px;
         width: 24px;
@@ -52,7 +55,7 @@
   }
 }
 
-.file-browser {
+.video-browser {
   border: 1px solid #a9a9a9;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 
@@ -233,8 +236,8 @@
   }
 }
 
-#tg_file_browser {
-  .file-browser {
+#tg_video_browser {
+  .video-browser {
     table {
       tbody {
         max-height: calc(100vh - 165px);
