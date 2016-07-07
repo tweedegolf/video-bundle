@@ -42,10 +42,7 @@ class DefaultController extends Controller
         $youtube = new Youtube(['key' => $this->getParameter('youtube_api_key')]);
         $videos = $youtube->getPlaylistItemsByPlaylistId($this->getParameter('youtube_playlist_id'));
         $this->em = $this->getDoctrine()->getManager();
-
-        /*
-          TODO: What if a video is removed from youtube? Cleanup?
-        */
+        $this->em->getRepository('TGVideoBundle:Video')->removeAll();
 
         foreach ($videos as $video) {
             $name = $video->snippet->title;
