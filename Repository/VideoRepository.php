@@ -17,7 +17,7 @@ class VideoRepository extends \Doctrine\ORM\EntityRepository
      */
     public function removeAll()
     {
-        $query = $em->createQuery('
+        $query = $this->_em->createQuery('
             DELETE TGVideoBundle:Video v WHERE 1 = 1'
         );
         $query->execute();

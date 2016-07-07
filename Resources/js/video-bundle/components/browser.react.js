@@ -63,7 +63,6 @@ export default class Browser extends React.Component {
     render() {
         let headers = _.map({
             name: "Naam",
-            size_bytes: "Grootte",
             create_ts: "Aangemaakt"
         }, (name, column) =>
             <SortHeader
