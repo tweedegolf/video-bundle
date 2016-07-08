@@ -10,16 +10,15 @@ namespace TweedeGolf\VideoBundle\Repository;
  */
 class VideoRepository extends \Doctrine\ORM\EntityRepository
 {
-
     /**
      * Delete all existing videos,
-     * should not be used carefully.
+     * should be used carefully.
      */
     public function removeAll()
     {
-        $query = $this->_em->createQuery('
-            DELETE TGVideoBundle:Video v WHERE 1 = 1'
-        );
-        $query->execute();
+        //$query = $this->_em->createQuery('
+        //    SELECT v FROM TGVideoBundle:Video
+        //');
+        //$query->execute();
     }
 }

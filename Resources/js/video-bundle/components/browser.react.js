@@ -108,7 +108,6 @@ export default class Browser extends React.Component {
                                 <th />
                                 <th />
                                 {headers}
-                                <th />
                             </tr>
                             </thead>
                             <List

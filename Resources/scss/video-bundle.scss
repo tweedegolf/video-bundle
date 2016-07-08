@@ -205,7 +205,7 @@
         width: 35px;
       }
       &:nth-child(2) {
-        width: 45px;
+        width: 120px;
         padding: 4px 0 0 0;
         .fa {
           font-size: 23px;
@@ -217,19 +217,16 @@
         }
       }
       &:nth-child(3) {
-        width: calc(100% - 330px);
+        width: calc(100% - 350px);
         max-width: 1px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
       &:nth-child(4) {
-        width: 85px;
-      }
-      &:nth-child(5) {
         width: 145px;
       }
-      &:nth-child(6) {
+      &:nth-child(5) {
         width: 55px;
       }
     }

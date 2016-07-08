@@ -16,7 +16,7 @@ class LoadVideoData extends AbstractFixture implements ContainerAwareInterface, 
     /**
      * @var int
      */
-    const FAKE_VIDEO_COUNT = 10;
+    const FAKE_VIDEO_COUNT = 3;
 
     /**
      * @var ContainerInterface
@@ -32,17 +32,9 @@ class LoadVideoData extends AbstractFixture implements ContainerAwareInterface, 
      * @var array
      */
     public $randomVideos = [
-        'https://www.youtube.com/watch?v=zofBinqC2F4',
-        'https://www.youtube.com/watch?v=H1iboKia3AQ',
-        'https://www.youtube.com/watch?v=9lh_becOt4Y',
-        'https://www.youtube.com/watch?v=6TwkVs6nhoY',
-        'https://www.youtube.com/watch?v=Ukugbb0Y72M',
-        'https://www.youtube.com/watch?v=6uhRxK_EOm4',
-        'https://www.youtube.com/watch?v=IadsLclBOS8',
-        'https://www.youtube.com/watch?v=A2_yg19Pu7Y',
-        'https://www.youtube.com/watch?v=2eAdXwZjHNA',
-        'https://www.youtube.com/watch?v=IvjMgVS6kng',
-        'https://www.youtube.com/watch?v=THnQTYqoDzg',
+        'zofBinqC2F4', 'H1iboKia3AQ', '9lh_becOt4Y', '6TwkVs6nhoY',
+        'Ukugbb0Y72M', '6uhRxK_EOm4', 'IadsLclBOS8', 'A2_yg19Pu7Y',
+        '2eAdXwZjHNA', 'IvjMgVS6kng', 'THnQTYqoDzg',
     ];
 
     /**
@@ -69,12 +61,17 @@ class LoadVideoData extends AbstractFixture implements ContainerAwareInterface, 
         $faker = $this->faker;
 
         for ($i = 0; $i < self::FAKE_VIDEO_COUNT; $i += 1) {
+
+            $randomElement = $faker->randomElement($this->randomVideos);
+            $url = 'https://www.youtube.com/watch?v=' . $randomElement;
+            $thumbnail = 'https://i.ytimg.com/vi/' . $randomElement . '/default.jpg';
+
             $video = new Video();
             $video->setName($faker->text(15));
             $video->setDescription($faker->text(500));
-            $video->setUrl($faker->randomElement($this->randomVideos));
-            $video->setThumbnail($faker->randomElement($this->randomVideos));
-            $video->setYoutubeId($faker->isbn10());
+            $video->setUrl($url);
+            $video->setThumbnail($thumbnail);
+            $video->setYoutubeId($randomElement);
             $this->addReference('video-'.$i, $video);
             $manager->persist($video);
         }

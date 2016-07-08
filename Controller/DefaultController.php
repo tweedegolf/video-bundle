@@ -23,7 +23,7 @@ class DefaultController extends Controller
      */
     public function listAction()
     {
-        $videos = $this->getDoctrine()->getRepository('TGVideoBundle:Video')->findAll();
+        $videos = $this->getDoctrine()->getRepository('TGVideoBundle:Video')->findAll([], ['createdAt' => 'DESC']);
 
         $serializer = new Serializer([$this->get('tg_video.normalizer')]);
 
@@ -42,7 +42,7 @@ class DefaultController extends Controller
         $youtube = new Youtube(['key' => $this->getParameter('youtube_api_key')]);
         $videos = $youtube->getPlaylistItemsByPlaylistId($this->getParameter('youtube_playlist_id'));
         $this->em = $this->getDoctrine()->getManager();
-        $this->em->getRepository('TGVideoBundle:Video')->removeAll();
+        //$this->em->getRepository('TGVideoBundle:Video')->removeAll();
 
         foreach ($videos as $video) {
             $name = $video->snippet->title;
