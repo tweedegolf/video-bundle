@@ -25,7 +25,7 @@ class VideoType extends AbstractType
     /**
      * FileType constructor.
      *
-     * @param FileNormalizer $normalizer
+     * @param VideoNormalizer $normalizer
      */
     public function __construct(VideoNormalizer $normalizer)
     {
