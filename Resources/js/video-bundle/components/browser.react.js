@@ -84,7 +84,8 @@ export default class Browser extends React.Component {
     }
 
     formatVideo(video) {
-        let class_name = "thumbnail" + (this.state.selected[video.id] ? " selected" : "");
+        let selected = this.state.selected[video.id];
+        let class_name = "thumbnail" + (selected ? " selected" : "");
 
         return <div className="col-xs-12 col-sm-6 col-md-3 col-lg-2" key={video.id}>
             <div className={class_name} onClick={this.onSelect.bind(this, video)}>
@@ -93,6 +94,7 @@ export default class Browser extends React.Component {
                     <h4>{video.name}</h4>
                     <p className="date">{video.created}</p>
                 </div>
+                {selected ? <input type="hidden" name={this.props.options.name} value={video.id} /> : null}
             </div>
         </div>;
     }
