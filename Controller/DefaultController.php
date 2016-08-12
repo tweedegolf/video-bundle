@@ -41,20 +41,28 @@ class DefaultController extends Controller
     {
         $youtube = new Youtube(['key' => $this->getParameter('youtube_api_key')]);
         $videos = $youtube->getPlaylistItemsByPlaylistId($this->getParameter('youtube_playlist_id'));
-        $this->em = $this->getDoctrine()->getManager();
-        //$this->em->getRepository('TGVideoBundle:Video')->removeAll();
+        $em = $this->getDoctrine()->getManager();
 
         foreach ($videos as $video) {
             $name = $video->snippet->title;
-            $thumbnail = $video->snippet->thumbnails->default->url;
             $youtubeId = $video->snippet->resourceId->videoId;
             $description = $video->snippet->description;
 
-            $video = $this->em->getRepository('TGVideoBundle:Video')->findOneByYoutubeId($youtubeId);
+            if (property_exists($video->snippet->thumbnails, 'maxres')) {
+                $thumbnail = $video->snippet->thumbnails->maxres->url;
+            } elseif (property_exists($video->snippet->thumbnails, 'high')) {
+                $thumbnail = $video->snippet->thumbnails->high->url;
+            } elseif (property_exists($video->snippet->thumbnails, 'medium')) {
+                $thumbnail = $video->snippet->thumbnails->medium->url;
+            } else {
+                $thumbnail = $video->snippet->thumbnails->default->url;
+            }
+
+            $video = $em->getRepository('TGVideoBundle:Video')->findOneByYoutubeId($youtubeId);
             if ($video === null) {
                 $video = new Video();
                 $video->setYoutubeId($youtubeId);
-                $this->em->persist($video);
+                $em->persist($video);
             }
 
             $video->setName($name);
@@ -63,9 +71,9 @@ class DefaultController extends Controller
             $video->setUrl('https://www.youtube.com/embed/' . $youtubeId);
         }
 
-        $this->em->flush();
+        $em->flush();
 
-        $videos = $this->getDoctrine()->getRepository('TGVideoBundle:Video')->findAll();
+        $videos = $this->getDoctrine()->getRepository('TGVideoBundle:Video')->findAll([], ['createdAt' => 'DESC']);
         $serializer = new Serializer([$this->get('tg_video.normalizer')]);
 
         return new JsonResponse([
