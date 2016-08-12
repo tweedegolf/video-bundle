@@ -2,11 +2,7 @@
     "name": "tweedegolf/video-bundle",
     "description": "Youtube video manager for Symfony 3 projects",
     "type": "symfony-bundle",
-    "license": "proprietary",
-    "dist": {
-        "url": "git@github.com:tweedegolf/video-bundle.git",
-        "type": "git"
-    },
+    "license": "MIT",
     "authors": [
         {
             "name": "Bram Tweedegolf",
