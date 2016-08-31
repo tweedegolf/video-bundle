@@ -2,8 +2,10 @@
 
 namespace TweedeGolf\VideoBundle\Controller;
 
+use Bravesheep\FlysystemUrlBundle\Exception\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Madcoda\Youtube;
@@ -32,30 +34,34 @@ class DefaultController extends Controller
         ]);
     }
 
-   /**
+    /**
+     * @param Request $request
      * @return JsonResponse
-     *
      * @Route("/sync")
      */
-    public function syncAction()
+    public function syncAction(Request $request)
     {
         $youtube = new Youtube(['key' => $this->getParameter('youtube_api_key')]);
         $videos = $youtube->getPlaylistItemsByPlaylistId($this->getParameter('youtube_playlist_id'));
         $em = $this->getDoctrine()->getManager();
+
 
         foreach ($videos as $video) {
             $name = $video->snippet->title;
             $youtubeId = $video->snippet->resourceId->videoId;
             $description = $video->snippet->description;
 
-            if (property_exists($video->snippet->thumbnails, 'maxres')) {
-                $thumbnail = $video->snippet->thumbnails->maxres->url;
-            } elseif (property_exists($video->snippet->thumbnails, 'high')) {
-                $thumbnail = $video->snippet->thumbnails->high->url;
-            } elseif (property_exists($video->snippet->thumbnails, 'medium')) {
-                $thumbnail = $video->snippet->thumbnails->medium->url;
-            } else {
-                $thumbnail = $video->snippet->thumbnails->default->url;
+            // get thumbnail if video has thumbnails
+            if (property_exists($video->snippet, 'thumbnails')) {
+                if (property_exists($video->snippet->thumbnails, 'maxres')) {
+                    $thumbnail = $video->snippet->thumbnails->maxres->url;
+                } elseif (property_exists($video->snippet->thumbnails, 'high')) {
+                    $thumbnail = $video->snippet->thumbnails->high->url;
+                } elseif (property_exists($video->snippet->thumbnails, 'medium')) {
+                    $thumbnail = $video->snippet->thumbnails->medium->url;
+                } else {
+                    $thumbnail = $video->snippet->thumbnails->default->url;
+                }
             }
 
             $video = $em->getRepository('TGVideoBundle:Video')->findOneByYoutubeId($youtubeId);
