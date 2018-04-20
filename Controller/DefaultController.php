@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Madcoda\Youtube;
 use TweedeGolf\VideoBundle\Entity\Video;
 
 /**
@@ -39,7 +38,7 @@ class DefaultController extends Controller
      */
     public function syncAction()
     {
-        $youtube = new Youtube(['key' => $this->getParameter('youtube_api_key')]);
+        $youtube = new \Madcoda\Youtube\Youtube(['key' => $this->getParameter('youtube_api_key')]);
         $videos = $youtube->getPlaylistItemsByPlaylistId($this->getParameter('youtube_playlist_id'));
         $em = $this->getDoctrine()->getManager();
 
