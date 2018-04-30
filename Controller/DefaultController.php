@@ -31,21 +31,38 @@ class DefaultController extends Controller
         ]);
     }
 
-   /**
+    /**
      * @return JsonResponse
      *
      * @Route("/sync")
      */
     public function syncAction()
     {
-        $youtube = new \Madcoda\Youtube\Youtube(['key' => $this->getParameter('youtube_api_key')]);
-        $videos = $youtube->getPlaylistItemsByPlaylistId($this->getParameter('youtube_playlist_id'));
+        // get all video's from the channel with id given by the parameter 'youtube_channel_id'
+        $apiKey = $this->getParameter('youtube_api_key');
+        $channelId = $this->getParameter('youtube_channel_id');
+
+        try {
+            $videos = $this->getPublicVideosByChannelId($apiKey, $channelId);
+        } catch (\Exception $e) {
+            $this->get('logger')->error('Exception occurred trying to connect to Youtube api');
+
+            return new JsonResponse([
+                'videos' => []
+            ]);
+        }
+
+        // save videos locally if they don't exist yet
         $em = $this->getDoctrine()->getManager();
 
         foreach ($videos as $video) {
             $name = $video->snippet->title;
             $youtubeId = $video->snippet->resourceId->videoId;
             $description = $video->snippet->description;
+            $publishedDate = \DateTime::createFromFormat(
+                'Y-m-d',
+                substr($video->snippet->publishedAt, 0, 10)
+            );
 
             if (property_exists($video->snippet->thumbnails, 'maxres')) {
                 $thumbnail = $video->snippet->thumbnails->maxres->url;
@@ -57,7 +74,7 @@ class DefaultController extends Controller
                 $thumbnail = $video->snippet->thumbnails->default->url;
             }
 
-            $video = $em->getRepository('TGVideoBundle:Video')->findOneByYoutubeId($youtubeId);
+            $video = $em->getRepository('TGVideoBundle:Video')->findOneBy(['youtubeId' => $youtubeId]);
             if ($video === null) {
                 $video = new Video();
                 $video->setYoutubeId($youtubeId);
@@ -68,15 +85,40 @@ class DefaultController extends Controller
             $video->setDescription($description);
             $video->setThumbnail($thumbnail);
             $video->setUrl('https://www.youtube.com/embed/' . $youtubeId);
+            $video->setCreatedAt($publishedDate);
+            $video->setUpdatedAt($publishedDate);
         }
 
         $em->flush();
 
-        $videos = $this->getDoctrine()->getRepository('TGVideoBundle:Video')->findAll([], ['createdAt' => 'DESC']);
+        // return videos serialized
+        $videos = $this->getDoctrine()->getRepository('TGVideoBundle:Video')->findBy([], ['createdAt' => 'DESC']);
         $serializer = new Serializer([$this->get('tg_video.normalizer')]);
 
         return new JsonResponse([
             'videos' => $serializer->normalize($videos)
         ]);
+    }
+
+    /**
+     * Get all videos from the channel with the given channel id
+     *
+     * @param $apiKey string
+     * @param $channelId string
+     * @return array
+     * @throws \Exception
+     */
+    private function getPublicVideosByChannelId($apiKey, $channelId)
+    {
+        $youtube = new \Madcoda\Youtube\Youtube(['key' => $apiKey]);
+
+        // trick to get the id of the list containing all uploads in the channel
+        $uploadsPlaylistId = 'UU' . substr($channelId, 2);
+
+        $videos = $youtube->getPlaylistItemsByPlaylistId($uploadsPlaylistId);
+
+        return array_filter($videos, function ($video) {
+            return $video->status->privacyStatus === 'public';
+        });
     }
 }
